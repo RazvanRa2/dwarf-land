@@ -1,0 +1,82 @@
+Tema 1 - DwarfLand - Radoi Razvan-Bogdan-Andrei - 311CA
+
+Am implementat tema(incluzand bonusul) astfel:
+
+
+-am declarat variablilele necesare rezolvarii problemei cu urmatoarele mentiuni:
+
+	- am grupat variablilele in main conform elementelor la care se refera cum ar fi sursa de lumina, copaci, lungimi necesare pentru calcularea valorii unghiului de la bonus etc.
+	- am acordat variabilelor perfectTreeX si perfectTreeY valoarea MAX (1001) pentru a putea decide daca a fost sau nu gasit un copac in intervalul in care sunt restrictionate aceste date conform enuntului temei (0 - 1000).
+
+- am realizat citirea datelor de intrare, in urmatorul mod:
+
+	- se citesc datele despre sursa de lumina si numarul de copaci
+			scanf("%d %d %f", &lightX, &lightY, &lightSourceIntensity);
+			scanf("%d", &n);
+	- se citesc datele primilor doi copaci, pentru a putea sa se citeasca ulterior celelalte date, intr-o bucla while. Se scade si valoarea lui n, pentru a-l utiliza mai apoi corect in while.
+			scanf("%d %d", &pTreeX, &pTreeY); n--;
+    			scanf("%d %d", &cTreeX, &cTreeY); n--;
+	- in bucla while se citesc ulterior datele pentru nTreeY si nTreeX(de la "next tree Y")
+
+-am procesat datele primite astfel:
+	- pentru copacul curent ("cTreeX", "cTreeY"), in while se calculeaza, atata timp cat nu este primul sau ultimul copac (de unde if(n>1)) valoarea intensitatii luminii conform formulei din textul problemei:
+			cTreeInt = (lightX-cTreeX)*(lightX-cTreeX)+(lightY-cTreeY)*(lightY-cTreeY);
+			cTreeInt = lightSourceIntensity/cTreeInt;
+	- se folosesc functiile checkMagic si checkPrime astfel:
+		- checkMagic construieste numarul magic si apoi il imparte la 10 in timp ce verifica daca acesta are proprietatile cerute, ajutandu-se de functia checkPrime, care doar verifica daca un numar dat ca parametru este prim
+	
+	-daca checkMagic spune ca numarul este magic inseamna ca copacul verificat are potential. Din acest motiv, se verifica daca el e mai scund decat vechiul copac ideal. Daca acest lucru se intampla, copacul verificat devine noul copac ideal, prin operatii de atribuire (se retin in plus si date necesare pentru a rezolva bonusul):
+			if(checkMagic(cTreeInt, pTreeY, cTreeY, nTreeY)==1){
+            			if(perfectTreeY>cTreeY){
+
+                			perfectPosition=treeCount;
+                			perfectIntensity=cTreeInt;
+
+               				perfectTreeX=cTreeX;
+                			perfectTreeY=cTreeY;
+
+                			befPerfX=pTreeX;
+                			befPerfY=pTreeY;
+
+                			aftPerfX=nTreeX;
+                			aftPerfY=nTreeY;
+
+                			goodTreeCounter++;
+
+            			 }
+        			}
+	- la finalul while-ului se interschimba copacii intre ei, pentru ca dupa urmatoarea citire sa se poata realiza o noua verificare
+
+					pTreeX=cTreeX; pTreeY=cTreeY;
+					cTreeX=nTreeX; cTreeY=nTreeY;
+
+	- se numara de asemenea cati copaci buni au fost gasiti. Daca la final valoarea este diferita de 0, se exectua rezolvarea bonusului
+	- se foloseste treeCount in while pentru a determina numarul de ordine al copacului verificat
+
+
+- Implementarea bonusului se realizeaza conform teoremei cosinusului:
+
+	-se calculeaza laturile triunghiului determinat de varfurile copacului ideal si copacilor de imediat langa acesta
+
+	-se calculeaza conform teoremei cosinusului, cosinusul unghiului cerut si apoi prin acos din biblioteca math.h se determina valoarea unghiului in radiani
+
+	-se schimba valoarea unghiului din radiani in grade
+
+	-in rezolvara bonusului se folosesc date de tip double pentru o mai buna precizie la a patra zecimala a unghiului
+
+
+- in final se tiparesc datele cerute, tinandu-se cont de urmatoarele:
+	-daca s-a gasit un copac ideal
+	-daca unghiul este ascutit sau obtuz
+
+		        if(angle>90 && angle<180)
+            printf("%d %.4f \n%.4lf IT CAN BE EXTENDED\n", perfectPosition, perfectIntensity, angle);
+        else
+            printf("%d %.4f \n%.4lf IT CAN NOT BE EXTENDED\n", perfectPosition, perfectIntensity, angle);
+    }
+    else
+        printf("There is no place for you in DwarfLand!\n");
+
+
+
+
